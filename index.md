@@ -56,20 +56,90 @@ For your first milestone, describe what your project is and how you plan to buil
 # Schematics 
 Here's where you'll put images of your schematics. [Tinkercad](https://www.tinkercad.com/blog/official-guide-to-tinkercad-circuits) and [Fritzing](https://fritzing.org/learning/) are both great resoruces to create professional schematic diagrams, though BSE recommends Tinkercad becuase it can be done easily and for free in the browser. 
 
-# Code
+# Robot Code
 Here's where you'll put your code. The syntax below places it into a block of code. Follow the guide [here]([url](https://www.markdownguide.org/extended-syntax/)) to learn how to customize it to your project needs. 
 
 ```c++
-void setup() {
-  // put your setup code here, to run once:
-  Serial.begin(9600);
-  Serial.println("Hello World!");
+#include <SoftwareSerial.h>
+SoftwareSerial BT_Serial(2, 3); // RX, TX
+
+#define enA 10//Enable1 L298 Pin enA
+#define in1 9 //Motor1  L298 Pin in1
+#define in2 8 //Motor1  L298 Pin in1
+#define in3 7 //Motor2  L298 Pin in1
+#define in4 6 //Motor2  L298 Pin in1
+#define enB 5 //Enable2 L298 Pin enB
+
+char bt_data; // variable to receive data from the serial port
+int Speed = 150; //Write The Duty Cycle 0 to 255 Enable Pins for Motor Speed  
+
+void setup() { // put your setup code here, to run once
+
+Serial.begin(38400); // start serial communication at 9600bps
+BT_Serial.begin(38400);
+
+pinMode(enA, OUTPUT); // declare as output for L298 Pin enA
+pinMode(in1, OUTPUT); // declare as output for L298 Pin in1
+pinMode(in2, OUTPUT); // declare as output for L298 Pin in2
+pinMode(in3, OUTPUT); // declare as output for L298 Pin in3  
+pinMode(in4, OUTPUT); // declare as output for L298 Pin in4
+pinMode(enB, OUTPUT); // declare as output for L298 Pin enB
+
+delay(200);
+}
+void loop(){
+if(BT_Serial.available() > 0){  //if some date is sent, reads it and saves in state    
+bt_data = BT_Serial.read();
+Serial.println(bt_data);          
+}
+ 
+     if(bt_data == 'b'){backward();  Speed=180;}  // if the bt_data is 'f' the DC motor will go forward
+else if(bt_data == 'f'){forward(); Speed=180;}  // if the bt_data is 'b' the motor will Reverse
+else if(bt_data == 'l'){turnLeft(); Speed=250;}  // if the bt_data is 'l' the motor will turn left
+else if(bt_data == 'r'){turnRight();Speed=250;} // if the bt_data is 'r' the motor will turn right
+else if(bt_data == 's'){Stop(); }     // if the bt_data 's' the motor will Stop
+
+analogWrite(enA, Speed);
+analogWrite(enB, Speed); 
+
+delay(50);
 }
 
-void loop() {
-  // put your main code here, to run repeatedly:
-
+void backward(){  //backward
+digitalWrite(in1, HIGH);  
+digitalWrite(in2, LOW);   
+digitalWrite(in3, LOW);   
+digitalWrite(in4, HIGH);  
 }
+
+void forward(){ //forward
+digitalWrite(in1, LOW);   
+digitalWrite(in2, HIGH);  
+digitalWrite(in3, HIGH);  
+digitalWrite(in4, LOW);   
+}
+
+void turnLeft(){ //turns left
+digitalWrite(in1, LOW);   
+digitalWrite(in2, HIGH);    
+digitalWrite(in3, LOW);   
+digitalWrite(in4, HIGH);  
+}
+
+void turnRight(){ //turns right
+digitalWrite(in1, HIGH);  
+digitalWrite(in2, LOW);   
+digitalWrite(in3, HIGH);  
+digitalWrite(in4, LOW);   
+}
+
+void Stop(){ //stop
+digitalWrite(in1, LOW);  
+digitalWrite(in2, LOW);  
+digitalWrite(in3, LOW);  
+digitalWrite(in4, LOW);  
+}
+
 ```
 
 # Bill of Materials
@@ -78,6 +148,19 @@ Don't forget to place the link of where to buy each component inside the quotati
 
 | **Part** | **Note** | **Price** | **Link** |
 |:--:|:--:|:--:|:--:|
+| Car Chassis Kit | Basic kit that provides the framework for the robot | $39.99 | <a href="https://www.amazon.com/dp/B0DJ7BT1V5?ref=cm_sw_r_cso_cp_apin_dp_RCSYWRX92M0H5DJ6HNQA&ref_=cm_sw_r_cso_cp_apin_dp_RCSYWRX92M0H5DJ6HNQA&social_share=cm_sw_r_cso_cp_apin_dp_RCSYWRX92M0H5DJ6HNQA&rsd=oU5zjHTwUjufNpZkC6CW0sqRlEipy6Xgf59f5777Kxh7cknbp6DwTNVEgVR1R1%2FY0I8OXRT9EOeWKVF0ff4yEbtnF%2Fc9MNo6yf5KfYW6Lx%2BkqE4%3D&edk=AQIDAHi1lw%2FM8UbbSMD9ScOOFEmBMHMthHeEhqDaQYPJUAX3jQHYb0B2nFfwd4jzBFZyiYMUAAAAfjB8BgkqhkiG9w0BBwagbzBtAgEAMGgGCSqGSIb3DQEHATAeBglghkgBZQMEAS4wEQQM7ULhz148q%2B1PjBJVAgEQgDvE8maRGRFUIB7tnUdXxocbXxxr5gXUvho7mquZi7Zok3ViYk7wwVFTYIEajFhVByN74efn2RX1qaf%2BHQ%3D%3D"> Link </a> |
+| Screwdriver Kit | Used to build the robot | $5.94 | <a href="https://www.amazon.com/Small-Screwdriver-Set-Mini-Magnetic/dp/B08RYXKJW9/"> Link </a> |
+| Item Name | What the item is used for | $Price | <a href="https://www.amazon.com/Arduino-A000066-ARDUINO-UNO-R3/dp/B008GRTSV6/"> Link </a> |
+| Item Name | What the item is used for | $Price | <a href="https://www.amazon.com/Arduino-A000066-ARDUINO-UNO-R3/dp/B008GRTSV6/"> Link </a> |
+| Item Name | What the item is used for | $Price | <a href="https://www.amazon.com/Arduino-A000066-ARDUINO-UNO-R3/dp/B008GRTSV6/"> Link </a> |
+| Item Name | What the item is used for | $Price | <a href="https://www.amazon.com/Arduino-A000066-ARDUINO-UNO-R3/dp/B008GRTSV6/"> Link </a> |
+| Item Name | What the item is used for | $Price | <a href="https://www.amazon.com/Arduino-A000066-ARDUINO-UNO-R3/dp/B008GRTSV6/"> Link </a> |
+| Item Name | What the item is used for | $Price | <a href="https://www.amazon.com/Arduino-A000066-ARDUINO-UNO-R3/dp/B008GRTSV6/"> Link </a> |
+| Item Name | What the item is used for | $Price | <a href="https://www.amazon.com/Arduino-A000066-ARDUINO-UNO-R3/dp/B008GRTSV6/"> Link </a> |
+| Item Name | What the item is used for | $Price | <a href="https://www.amazon.com/Arduino-A000066-ARDUINO-UNO-R3/dp/B008GRTSV6/"> Link </a> |
+| Item Name | What the item is used for | $Price | <a href="https://www.amazon.com/Arduino-A000066-ARDUINO-UNO-R3/dp/B008GRTSV6/"> Link </a> |
+| Item Name | What the item is used for | $Price | <a href="https://www.amazon.com/Arduino-A000066-ARDUINO-UNO-R3/dp/B008GRTSV6/"> Link </a> |
+| Item Name | What the item is used for | $Price | <a href="https://www.amazon.com/Arduino-A000066-ARDUINO-UNO-R3/dp/B008GRTSV6/"> Link </a> |
 | Item Name | What the item is used for | $Price | <a href="https://www.amazon.com/Arduino-A000066-ARDUINO-UNO-R3/dp/B008GRTSV6/"> Link </a> |
 | Item Name | What the item is used for | $Price | <a href="https://www.amazon.com/Arduino-A000066-ARDUINO-UNO-R3/dp/B008GRTSV6/"> Link </a> |
 | Item Name | What the item is used for | $Price | <a href="https://www.amazon.com/Arduino-A000066-ARDUINO-UNO-R3/dp/B008GRTSV6/"> Link </a> |
