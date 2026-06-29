@@ -142,6 +142,92 @@ digitalWrite(in4, LOW);
 
 ```
 
+# Hand Controller Code
+Here's where you'll put your code. The syntax below places it into a block of code. Follow the guide [here]([url](https://www.markdownguide.org/extended-syntax/)) to learn how to customize it to your project needs. 
+
+```c++
+#include <SoftwareSerial.h>
+SoftwareSerial BT_Serial(2, 3); // RX, TX
+
+#define enA 10//Enable1 L298 Pin enA
+#define in1 9 //Motor1  L298 Pin in1
+#define in2 8 //Motor1  L298 Pin in1
+#define in3 7 //Motor2  L298 Pin in1
+#define in4 6 //Motor2  L298 Pin in1
+#define enB 5 //Enable2 L298 Pin enB
+
+char bt_data; // variable to receive data from the serial port
+int Speed = 150; //Write The Duty Cycle 0 to 255 Enable Pins for Motor Speed  
+
+void setup() { // put your setup code here, to run once
+
+Serial.begin(38400); // start serial communication at 9600bps
+BT_Serial.begin(38400);
+
+pinMode(enA, OUTPUT); // declare as output for L298 Pin enA
+pinMode(in1, OUTPUT); // declare as output for L298 Pin in1
+pinMode(in2, OUTPUT); // declare as output for L298 Pin in2
+pinMode(in3, OUTPUT); // declare as output for L298 Pin in3  
+pinMode(in4, OUTPUT); // declare as output for L298 Pin in4
+pinMode(enB, OUTPUT); // declare as output for L298 Pin enB
+
+delay(200);
+}
+void loop(){
+if(BT_Serial.available() > 0){  //if some date is sent, reads it and saves in state    
+bt_data = BT_Serial.read();
+Serial.println(bt_data);          
+}
+ 
+     if(bt_data == 'b'){backward();  Speed=180;}  // if the bt_data is 'f' the DC motor will go forward
+else if(bt_data == 'f'){forward(); Speed=180;}  // if the bt_data is 'b' the motor will Reverse
+else if(bt_data == 'l'){turnLeft(); Speed=250;}  // if the bt_data is 'l' the motor will turn left
+else if(bt_data == 'r'){turnRight();Speed=250;} // if the bt_data is 'r' the motor will turn right
+else if(bt_data == 's'){Stop(); }     // if the bt_data 's' the motor will Stop
+
+analogWrite(enA, Speed);
+analogWrite(enB, Speed); 
+
+delay(50);
+}
+
+void backward(){  //backward
+digitalWrite(in1, HIGH);  
+digitalWrite(in2, LOW);   
+digitalWrite(in3, LOW);   
+digitalWrite(in4, HIGH);  
+}
+
+void forward(){ //forward
+digitalWrite(in1, LOW);   
+digitalWrite(in2, HIGH);  
+digitalWrite(in3, HIGH);  
+digitalWrite(in4, LOW);   
+}
+
+void turnLeft(){ //turns left
+digitalWrite(in1, LOW);   
+digitalWrite(in2, HIGH);    
+digitalWrite(in3, LOW);   
+digitalWrite(in4, HIGH);  
+}
+
+void turnRight(){ //turns right
+digitalWrite(in1, HIGH);  
+digitalWrite(in2, LOW);   
+digitalWrite(in3, HIGH);  
+digitalWrite(in4, LOW);   
+}
+
+void Stop(){ //stop
+digitalWrite(in1, LOW);  
+digitalWrite(in2, LOW);  
+digitalWrite(in3, LOW);  
+digitalWrite(in4, LOW);  
+}
+
+```
+
 # Bill of Materials
 Here's where you'll list the parts in your project. To add more rows, just copy and paste the example rows below.
 Don't forget to place the link of where to buy each component inside the quotation marks in the corresponding row after href =. Follow the guide [here]([url](https://www.markdownguide.org/extended-syntax/)) to learn how to customize this to your project needs. 
